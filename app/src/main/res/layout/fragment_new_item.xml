@@ -5,9 +5,94 @@
     android:layout_height="match_parent"
     tools:context=".ui.item.NewItemFragment">
 
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello" />
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/hello" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add a new item available for donation:"
+            android:textAlignment="center"
+            android:textSize="20dp"/>
+
+        <ImageView
+            android:id="@+id/imageProduct"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="25dp"
+            android:src="@drawable/ic_add_photo" />
+
+        <Button
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Take Photo"
+            android:backgroundTint="@color/blue"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:text="Product Name:"
+            android:textSize="20dp"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/productName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Name"/>
+
+
+        <TextView
+            android:id="@+id/detailProductDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:text="Product Description:"
+            android:textSize="20dp"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/productDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:scrollbars="vertical"
+            android:hint="Product Description"/>
+
+        <TextView
+            android:id="@+id/setLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Location"
+            android:textSize="20dp"
+            android:layout_margin="15dp"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/blue"
+            android:text="Save Item"/>
+
+    </LinearLayout>
 
 </FrameLayout>
