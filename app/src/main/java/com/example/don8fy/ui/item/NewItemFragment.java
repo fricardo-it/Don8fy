@@ -16,7 +16,6 @@ import com.example.don8fy.R;
 
 public class NewItemFragment extends Fragment {
 
-    private NewItemViewModel mViewModel;
 
     public static NewItemFragment newInstance() {
         return new NewItemFragment();
@@ -26,13 +25,6 @@ public class NewItemFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_new_item, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(NewItemViewModel.class);
-        // TODO: Use the ViewModel
     }
 
 }

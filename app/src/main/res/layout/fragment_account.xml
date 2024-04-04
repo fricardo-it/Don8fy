@@ -1,22 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    tools:context=".ui.account.AccountFragment">
-
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    >
+    <ImageView
+        android:layout_width="208dp"
+        android:layout_height="155dp"
+        android:layout_gravity="center"
+        android:layout_margin="50dp"
+        android:src="@drawable/ic_account" />
     <TextView
-        android:id="@+id/text_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="User"
+        android:textSize="30dp"
+        android:textColor="@color/blue"/>
+    <TextView
+        android:id="@+id/emailtxt"
+        android:layout_width="350dp"
+        android:text="email"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:text="Name"/>
+    <EditText
+        android:id="@+id/nametxt"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/blue"
+        android:textStyle="bold"
+        android:text="Password"/>
+
+    <EditText
+        android:id="@+id/passwordtxt"
+        android:layout_width="350dp"
+        android:inputType="textPassword"
+        android:layout_height="wrap_content"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="fill"
+        android:layout_marginTop="40dp"
+        >
+
+        <Button
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Edit User"
+            android:textColor="@color/blue"
+            android:textSize="15dp" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Delete User"
+            android:layout_marginLeft="122dp"
+            android:textColor="@color/blue"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

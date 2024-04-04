@@ -1,25 +1,36 @@
 package com.example.don8fy;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
+import android.view.View;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.don8fy.databinding.ActivityMainBinding;
+import com.example.don8fy.ui.item.ImageListAdapter;
+import com.example.don8fy.ui.item.ItemModel;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    RecyclerView recyclerView;
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+
+    private ImageListAdapter adapter;
+    private ArrayList<ItemModel> itemList;
+    String userName, usermail, userpassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +59,22 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
+        userName = prefs.getString("name", "");
+        usermail = prefs.getString("email", "");
+        userpassword = prefs.getString("password", "");
+
+        //Initialize RecyclerView
+        recyclerView = findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        itemList = new ArrayList<>();
+        adapter = new ImageListAdapter(MainActivity.this, itemList);
+        recyclerView.setAdapter(adapter);
+
+        // Retrieve items from Firebase
+        adapter.getItems();
     }
 
     @Override
@@ -63,4 +90,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

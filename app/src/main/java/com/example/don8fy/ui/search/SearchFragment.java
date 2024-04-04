@@ -16,16 +16,16 @@ public class SearchFragment extends Fragment {
 
     private FragmentSearchBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        SearchViewModel searchViewModel =
-                new ViewModelProvider(this).get(SearchViewModel.class);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        SearchViewModel searchViewModel = new ViewModelProvider(this).get(SearchViewModel.class);
 
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.textSearch;
         searchViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
         return root;
     }
 
