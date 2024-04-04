@@ -21,20 +21,16 @@ public class LogoutFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        // Fazer logout
         FirebaseAuth.getInstance().signOut();
 
-        // Remover os dados do usuário do SharedPreferences
         SharedPreferences.Editor editor = requireActivity().getSharedPreferences("UserData", MODE_PRIVATE).edit();
-        editor.clear(); // Limpa todos os dados salvos
+        editor.clear();
         editor.apply();
 
-        // Redirecionar para a tela de login
         Intent intent = new Intent(getActivity(), LoginPage.class);
         startActivity(intent);
-        requireActivity().finish(); // Encerra a atividade atual
+        requireActivity().finish();
 
-        // Retornar null, pois não precisamos de uma view neste fragmento
         return null;
     }
 }
