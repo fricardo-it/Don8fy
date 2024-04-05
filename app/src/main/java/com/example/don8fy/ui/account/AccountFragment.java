@@ -1,12 +1,10 @@
 package com.example.don8fy.ui.account;
 
-import static android.content.Context.MODE_PRIVATE;
-import static android.content.Intent.getIntent;
-
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.don8fy.LoginPage;
+import com.example.don8fy.ui.access.LoginPage;
 import com.example.don8fy.R;
 import com.example.don8fy.databinding.FragmentAccountBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -33,40 +34,30 @@ public class AccountFragment extends Fragment {
 
     private FragmentAccountBinding binding;
 
-    EditText nameUser,  passUser;
+    EditText nameUser, passUser;
     TextView emailUser;
-    Button editUser, deleteUser, back;
+    Button editUser, deleteUser, changePassword;
 
     // Firebase
     private FirebaseAuth mAuth;
     private DatabaseReference usersRef;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        AccountViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(AccountViewModel.class);
+        mAuth = FirebaseAuth.getInstance();
+        usersRef = FirebaseDatabase.getInstance().getReference("users");
 
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        mAuth = FirebaseAuth.getInstance();
-        usersRef = FirebaseDatabase.getInstance().getReference("users");
+        editUser = root.findViewById(R.id.edit);
+        deleteUser = root.findViewById(R.id.delete);
+        changePassword = root.findViewById(R.id.changepassw);
 
         nameUser = root.findViewById(R.id.nametxt);
         emailUser = root.findViewById(R.id.emailtxt);
-        passUser = root.findViewById(R.id.passwordtxt);
-
-        editUser = root.findViewById(R.id.edit);
-        deleteUser = root.findViewById(R.id.delete);
-
-        SharedPreferences prefs = requireActivity().getSharedPreferences("UserData", MODE_PRIVATE);
-        String userName = prefs.getString("name", "");
-        String usermail = prefs.getString("email", "");
-        String userpassword = prefs.getString("password", "");
-
-        nameUser.setText(userName);
-        emailUser.setText(usermail);
-        passUser.setText(userpassword);
+//        passUser = root.findViewById(R.id.passwordtxt);
 
         editUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,61 +73,178 @@ public class AccountFragment extends Fragment {
             }
         });
 
-//        final TextView textView = binding.textAccount;
-//        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        changePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChangePasswordDialog();
+            }
+        });
+
         return root;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userName = currentUser.getDisplayName();
+            String userEmail = currentUser.getEmail();
+
+            if (!TextUtils.isEmpty(userName)) {
+                nameUser.setText(userName);
+            }
+            emailUser.setText(userEmail);
+        }
+    }
+
     private void updateUser() {
         FirebaseUser user = mAuth.getCurrentUser();
-        if(user != null){
-            String newName = nameUser.getText().toString();
-            String newPassword = passUser.getText().toString();
+        if (user != null) {
+            String newName = nameUser.getText().toString().trim();
 
-            if(!TextUtils.isEmpty(newName)){
-                usersRef.child(user.getUid()).child("name").setValue(newName);
+            if (TextUtils.isEmpty(newName)) {
+                Toast.makeText(requireContext(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
+                return;
             }
 
-            if(!TextUtils.isEmpty(newPassword)){
-                user.updatePassword(newPassword);
-                usersRef.child(user.getUid()).child("password").setValue(newPassword);
-            }
-
-            SharedPreferences.Editor editor = requireActivity().getSharedPreferences("UserData", MODE_PRIVATE).edit();
-            editor.putString("name", newName);
-            editor.putString("password", newPassword);
-            editor.apply();
-
-            Toast.makeText(requireContext(), "User Updated", Toast.LENGTH_SHORT).show();
+            user.updateProfile(new UserProfileChangeRequest.Builder()
+                            .setDisplayName(newName)
+                            .build())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(requireContext(), "User profile updated", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to update user profile", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
         }
     }
 
     private void deleteUserAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage("Are you sure you want to delete your account?");
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        // Delete also from the database
-                        usersRef.child(user.getUid()).removeValue();
-                        Toast.makeText(requireContext(), "User account deleted", Toast.LENGTH_SHORT).show();
-
-                        // Start the login activity after deleting the user
-                        Intent intent = new Intent(requireContext(), LoginPage.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Clear the back stack
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to delete the user", Toast.LENGTH_SHORT).show();
-                    }
+                public void onClick(DialogInterface dialog, int which) {
+                    user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(requireContext(), "User account deleted", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(requireContext(), LoginPage.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to delete user account", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Cancel Delete
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 
+    private void showChangePasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Change Password");
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_change_password, null);
+        builder.setView(dialogView);
+
+        EditText oldPasswordEditText = dialogView.findViewById(R.id.old_password);
+        EditText newPasswordEditText = dialogView.findViewById(R.id.new_password);
+        EditText confirmPasswordEditText = dialogView.findViewById(R.id.confirm_password);
+
+        builder.setPositiveButton("Change", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String oldPassword = oldPasswordEditText.getText().toString();
+                String newPassword = newPasswordEditText.getText().toString();
+                String confirmPassword = confirmPasswordEditText.getText().toString();
+
+                if (validatePasswords(oldPassword, newPassword, confirmPassword)) {
+                    reauthenticateUser(oldPassword, newPassword);
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    private void reauthenticateUser(String oldPassword, String newPassword) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), oldPassword);
+            user.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                updatePassword(newPassword);
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to reauthenticate. Please check your current password.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void updatePassword(String newPassword) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            user.updatePassword(newPassword)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(requireContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(requireContext(), "Failed to update password", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+    private boolean validatePasswords(String oldPassword, String newPassword, String confirmPassword) {
+
+        if (TextUtils.isEmpty(oldPassword) || TextUtils.isEmpty(newPassword) || TextUtils.isEmpty(confirmPassword)) {
+            Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (newPassword.length() < 8 || confirmPassword.length() < 8) {
+            Toast.makeText(requireContext(), "Password must be at least 8 characters long.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            Toast.makeText(requireContext(), "Password and confirmation do not match.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
 }

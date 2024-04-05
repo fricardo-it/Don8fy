@@ -1,8 +1,9 @@
-package com.example.don8fy;
+package com.example.don8fy.ui.access;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
@@ -14,62 +15,54 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.don8fy.MainActivity;
+import com.example.don8fy.R;
+import com.example.don8fy.ui.account.SignUpPage;
+import com.example.don8fy.ui.account.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginPage extends AppCompatActivity {
     Button btnSignIn;
     TextView txtSignUp;
     EditText email, password;
     ImageButton btnEye;
-    String userName;
-
+    String userEmail, userPassword;
     boolean isPasswordVisible = false;
 
     private FirebaseAuth mAuth;
+    UserModel userModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
 
+        mAuth =  FirebaseAuth.getInstance();
+
         btnSignIn = findViewById(R.id.loginbtn);
         txtSignUp = findViewById(R.id.signupbtn);
         btnEye = findViewById(R.id.eyebtn);
         email = findViewById(R.id.emailtxt);
         password = findViewById(R.id.passwordtxt);
-        mAuth =  FirebaseAuth.getInstance();
 
-        //Retrieve email and password from the signup page
-        Bundle extras = getIntent().getExtras();
-        if (extras != null){
-            String usermail = extras.getString("email");
-            String userpassword = extras.getString("password");
-
-            email.setText(usermail);
-            password.setText(userpassword);
+        userEmail = getIntent().getStringExtra("email");
+        userPassword = getIntent().getStringExtra("password");
+        if (userEmail != null && userPassword != null) {
+            email.setText(userEmail);
+            password.setText(userPassword);
         }
 
-        //configurate the toggle button to see the password
         btnEye.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isPasswordVisible){
-                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    btnEye.setImageResource(R.drawable.eyeopen);
-                }else{
-                    password.setTransformationMethod(null);
-                    btnEye.setImageResource(R.drawable.eyeclosed);
-                }
                 isPasswordVisible = !isPasswordVisible;
+                password.setTransformationMethod(isPasswordVisible ? null : PasswordTransformationMethod.getInstance());
+                btnEye.setImageResource(isPasswordVisible ? R.drawable.ic_hide : R.drawable.ic_show);
             }
         });
 
@@ -87,14 +80,13 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     private void loginUser() {
-        String userEmail = email.getText().toString().trim();
-        String userPassword = password.getText().toString().trim();
+        userEmail = email.getText().toString().trim();
+        userPassword = password.getText().toString().trim();
 
-        if (userEmail.isEmpty() || userPassword.isEmpty()) {
+        if (TextUtils.isEmpty(userEmail) || TextUtils.isEmpty(userPassword)) {
             Toast.makeText(LoginPage.this, "All fields must be filled", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -103,7 +95,21 @@ public class LoginPage extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    saveUserDataToSharedPreferences(userEmail, userPassword);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        String userN = user.getDisplayName();
+                        String userE = user.getEmail();
+                        String userUID = user.getUid();
+                        userModel = new UserModel(userN, userE, userPassword);
+
+                        SharedPreferences.Editor editor = getSharedPreferences("UserData", MODE_PRIVATE).edit();
+                        editor.putString("email", userE);
+                        editor.putString("name", userN);
+//                        editor.putString("password", userPassword);
+                        editor.putString("uid", userUID);
+                        editor.apply();
+                    }
+
                     startActivity(new Intent(LoginPage.this, MainActivity.class));
                     finish();
                 } else {
@@ -112,12 +118,4 @@ public class LoginPage extends AppCompatActivity {
             }
         });
     }
-
-    private void saveUserDataToSharedPreferences(String userEmail, String userPassword) {
-        SharedPreferences.Editor editor = getSharedPreferences("UserData", MODE_PRIVATE).edit();
-        editor.putString("email", userEmail);
-        editor.putString("password", userPassword);
-        editor.apply();
-    }
-
 }

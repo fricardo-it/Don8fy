@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.don8fy.databinding.ActivityMainBinding;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
+import com.example.don8fy.ui.account.UserModel;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -24,13 +27,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-
     private ImageListAdapter adapter;
     private ArrayList<ItemModel> itemList;
-    String userName, usermail, userpassword;
+
+    private UserModel currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +45,15 @@ public class MainActivity extends AppCompatActivity {
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Don8fy Main Menu", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .setAnchorView(R.id.fab).show();
             }
         });
+
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_favorites, R.id.nav_account, R.id.nav_search, R.id.nav_settings, R.id.nav_logout)
                 .setOpenableLayout(drawer)
@@ -60,12 +62,21 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
-        userName = prefs.getString("name", "");
-        usermail = prefs.getString("email", "");
-        userpassword = prefs.getString("password", "");
+        View headerView = navigationView.getHeaderView(0);
+        TextView nameHeaderTextView = headerView.findViewById(R.id.nameheader);
+        TextView emailHeaderTextView = headerView.findViewById(R.id.emailheader);
 
-        //Initialize RecyclerView
+        SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
+        String nameUser = prefs.getString("name", "qwer");
+        String emailUser = prefs.getString("email", "");
+        String passwUser = prefs.getString("password", "");
+
+        currentUser = new UserModel(nameUser, emailUser, passwUser);
+
+        // user data header
+        nameHeaderTextView.setText(nameUser);
+        emailHeaderTextView.setText(emailUser);
+
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -73,13 +84,11 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ImageListAdapter(MainActivity.this, itemList);
         recyclerView.setAdapter(adapter);
 
-        // Retrieve items from Firebase
         adapter.getItems();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -90,5 +99,4 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
 }

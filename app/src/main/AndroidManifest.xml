@@ -41,10 +41,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginPage"
+            android:name=".ui.access.LoginPage"
             android:exported="false" />
         <activity
-            android:name=".SignUpPage"
+            android:name=".ui.account.SignUpPage"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
