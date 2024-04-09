@@ -24,6 +24,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginPage extends AppCompatActivity {
     Button btnSignIn;
@@ -42,7 +47,7 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
 
-        mAuth =  FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         btnSignIn = findViewById(R.id.loginbtn);
         txtSignUp = findViewById(R.id.signupbtn);
@@ -97,21 +102,36 @@ public class LoginPage extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
-                        String userN = user.getDisplayName();
-                        String userE = user.getEmail();
-                        String userUID = user.getUid();
-                        userModel = new UserModel(userN, userE, userPassword);
+                        // Recupere os dados do usuário do banco de dados
+                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    String userName = snapshot.child("name").getValue(String.class);
+                                    String userEmail = snapshot.child("email").getValue(String.class);
+                                    String userPassword = snapshot.child("password").getValue(String.class);
 
-                        SharedPreferences.Editor editor = getSharedPreferences("UserData", MODE_PRIVATE).edit();
-                        editor.putString("email", userE);
-                        editor.putString("name", userN);
-//                        editor.putString("password", userPassword);
-                        editor.putString("uid", userUID);
-                        editor.apply();
+                                    // Atualize as preferências compartilhadas com os dados do usuário
+                                    SharedPreferences.Editor editor = getSharedPreferences("UserData", MODE_PRIVATE).edit();
+                                    editor.putString("email", userEmail);
+                                    editor.putString("name", userName);
+                                    editor.putString("password", userPassword);
+                                    editor.apply();
+
+                                    startActivity(new Intent(LoginPage.this, MainActivity.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(LoginPage.this, "User data not found in database", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(LoginPage.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-
-                    startActivity(new Intent(LoginPage.this, MainActivity.class));
-                    finish();
                 } else {
                     Toast.makeText(LoginPage.this, "Login Failed", Toast.LENGTH_SHORT).show();
                 }

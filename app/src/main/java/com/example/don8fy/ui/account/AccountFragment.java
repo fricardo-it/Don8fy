@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +26,11 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AccountFragment extends Fragment {
 
@@ -57,7 +59,6 @@ public class AccountFragment extends Fragment {
 
         nameUser = root.findViewById(R.id.nametxt);
         emailUser = root.findViewById(R.id.emailtxt);
-//        passUser = root.findViewById(R.id.passwordtxt);
 
         editUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,13 +89,25 @@ public class AccountFragment extends Fragment {
         super.onResume();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            String userName = currentUser.getDisplayName();
-            String userEmail = currentUser.getEmail();
+            String userId = currentUser.getUid();
 
-            if (!TextUtils.isEmpty(userName)) {
-                nameUser.setText(userName);
-            }
-            emailUser.setText(userEmail);
+            usersRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        String userName = snapshot.child("name").getValue(String.class);
+                        String userEmail = snapshot.child("email").getValue(String.class);
+
+                        nameUser.setText(userName);
+                        emailUser.setText(userEmail);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Handle errors here
+                }
+            });
         }
     }
 

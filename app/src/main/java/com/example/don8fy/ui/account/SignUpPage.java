@@ -18,10 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.don8fy.ui.access.LoginPage;
 import com.example.don8fy.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -88,51 +91,76 @@ public class SignUpPage extends AppCompatActivity {
     }
 
     private void registerUser() {
-        String name = txtname.getText().toString().trim();
-        String email = txtemail.getText().toString().trim();
-        String password = txtpassword.getText().toString().trim();
-        String confirmPassword = txtconfirmpassword.getText().toString().trim();
+        String userName = txtname.getText().toString().trim();
+        String userEmail = txtemail.getText().toString().trim();
+        String userPassword = txtpassword.getText().toString().trim();
+        String userConfirmPassword = txtconfirmpassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
-            Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show();
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        if (userName.isEmpty() || userEmail.isEmpty() || userPassword.isEmpty() || userConfirmPassword.isEmpty()) {
+            Toast.makeText(this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (password.length() < 8) {
-            txtpassword.setError("Password must be at least 8 characters long");
+        if (userPassword.length() < 8) {
+            txtpassword.setError("Password should be at least 8 characters long");
             txtpassword.requestFocus();
             return;
         }
-
-        if (!password.equals(confirmPassword)) {
+        if (!userPassword.equals(userConfirmPassword)) {
             txtconfirmpassword.setError("Password and confirmation do not match");
             txtconfirmpassword.requestFocus();
             return;
         }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()) {
             txtemail.setError("Please enter a valid email address");
             txtemail.requestFocus();
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                            if (currentUser != null) {
-                                UserModel user = new UserModel(name, email, password);
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if (user != null) {
+                                UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(userName)
+                                        .build();
 
-                                Intent intent = new Intent(SignUpPage.this, LoginPage.class);
-                                intent.putExtra("password", password);
-                                intent.putExtra("email", email);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Toast.makeText(SignUpPage.this, "Failed to get current user", Toast.LENGTH_SHORT).show();
+                                user.updateProfile(profileUpdate)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    // Nome do usuário atualizado com sucesso
+                                                    Toast.makeText(SignUpPage.this, "User profile updated.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
                             }
+
+                            UserModel userModel = new UserModel(userName, userEmail, userPassword);
+                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            databaseRef.child(userId).setValue(user)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Intent intent = new Intent(SignUpPage.this, LoginPage.class);
+                                            intent.putExtra("name", userName);
+                                            intent.putExtra("email", userEmail);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(SignUpPage.this, "Failed to save new User", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
                         } else {
                             Toast.makeText(SignUpPage.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         TextView emailHeaderTextView = headerView.findViewById(R.id.emailheader);
 
         SharedPreferences prefs = getSharedPreferences("UserData", MODE_PRIVATE);
-        String nameUser = prefs.getString("name", "qwer");
+        String nameUser = prefs.getString("name", "");
         String emailUser = prefs.getString("email", "");
         String passwUser = prefs.getString("password", "");
 
