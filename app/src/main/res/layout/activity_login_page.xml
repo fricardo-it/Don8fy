@@ -37,8 +37,8 @@
     <EditText
         android:id="@+id/emailtxt"
         android:layout_width="350dp"
-        android:layout_height="wrap_content" />
-<!--        android:text="francisco@lasalle.com"/>-->
+        android:layout_height="wrap_content"
+        android:text="francisco@lasalle.com"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,8 +58,8 @@
             android:id="@+id/passwordtxt"
             android:layout_width="300dp"
             android:inputType="textPassword"
-            android:layout_height="wrap_content"/>
-<!--            android:text="12345678"/>-->
+            android:layout_height="wrap_content"
+            android:text="12345678"/>
 
 
         <ImageButton

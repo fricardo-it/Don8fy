@@ -9,7 +9,13 @@
         android:id="@+id/nav_home"
         android:name="com.example.don8fy.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_new_item"
+            app:destination="@id/nav_new_item" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_search"
@@ -40,5 +46,11 @@
         android:name="com.example.don8fy.ui.access.LogoutFragment"
         android:label="@string/menu_logout"
         tools:layout="@layout/fragment_logout" />
+
+    <fragment
+        android:id="@+id/nav_new_item"
+        android:name="com.example.don8fy.ui.item.NewItemFragment"
+        android:label="@string/menu_new_item"
+        tools:layout="@layout/fragment_new_item" />
 
 </navigation>
