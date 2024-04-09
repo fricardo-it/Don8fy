@@ -29,29 +29,14 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Configurar o RecyclerView
         recyclerView = root.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ImageListAdapter(getContext(), new ArrayList<ItemModel>());
         recyclerView.setAdapter(adapter);
 
-        // Configurar outros componentes da interface do usuário
-        ImageButton accountButton = root.findViewById(R.id.account);
-        ImageButton addButton = root.findViewById(R.id.addBtn);
         ImageView searchImageView = root.findViewById(R.id.imageViewSearch);
         EditText searchText = root.findViewById(R.id.txtSearch);
         ImageView filterImageView = root.findViewById(R.id.filter);
-
-        // Adicione manipuladores de eventos, ou outras configurações conforme necessário
-        // Por exemplo:
-        accountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Lógica para o botão de conta
-            }
-        });
-
-        // Adicione manipuladores de eventos para outros componentes conforme necessário
 
         return root;
     }
