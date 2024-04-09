@@ -1,6 +1,7 @@
 package com.example.don8fy.ui.item;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -31,6 +33,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 public class NewItemFragment extends Fragment {
@@ -42,6 +45,7 @@ public class NewItemFragment extends Fragment {
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     private static final int CAMERA_REQUEST_CODE = 101;
+    private static final int GALLERY_REQUEST_CODE = 102;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,7 +61,7 @@ public class NewItemFragment extends Fragment {
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkCameraPermission();
+                showOptionsDialog();
             }
         });
 
@@ -71,6 +75,25 @@ public class NewItemFragment extends Fragment {
         return view;
     }
 
+    private void showOptionsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Choose an option");
+        builder.setItems(new CharSequence[]{"Take Photo", "Choose from Gallery"}, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        checkCameraPermission();
+                        break;
+                    case 1:
+                        openGallery();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
@@ -82,6 +105,11 @@ public class NewItemFragment extends Fragment {
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+    }
+
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
     }
 
     @Override
@@ -102,9 +130,20 @@ public class NewItemFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            // Captured from camera
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             productImage.setImageBitmap(photo);
             imageUri = getImageUri(photo);
+        } else if (requestCode == GALLERY_REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            // Selected from gallery
+            Uri selectedImageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), selectedImageUri);
+                productImage.setImageBitmap(bitmap);
+                imageUri = selectedImageUri;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -140,7 +179,7 @@ public class NewItemFragment extends Fragment {
                 }
             });
         } else {
-            Toast.makeText(requireContext(), "Please take a photo first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Please take or choose a photo first", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -154,6 +193,7 @@ public class NewItemFragment extends Fragment {
                 @Override
                 public void onSuccess(Void unused) {
                     Toast.makeText(requireContext(), "New Item Saved!", Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
