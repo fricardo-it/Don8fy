@@ -1,5 +1,6 @@
 package com.example.don8fy.ui.account;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,10 +34,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class AccountFragment extends Fragment {
+    public interface OnNameUpdateListener {
+        void onNameUpdated(String newName);
+    }
+    private OnNameUpdateListener nameUpdateListener;
 
     private FragmentAccountBinding binding;
 
-    EditText nameUser, passUser;
+    EditText nameUser;
     TextView emailUser;
     Button editUser, deleteUser, changePassword;
 
@@ -60,6 +65,16 @@ public class AccountFragment extends Fragment {
         nameUser = root.findViewById(R.id.nametxt);
         emailUser = root.findViewById(R.id.emailtxt);
 
+        // disable edit name btn
+        editUser.setEnabled(false);
+
+        nameUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // enable btn
+                editUser.setEnabled(true);
+            }
+        });
         editUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,6 +126,23 @@ public class AccountFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof OnNameUpdateListener) {
+            nameUpdateListener = (OnNameUpdateListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnNameUpdateListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        nameUpdateListener = null;
+    }
+
     private void updateUser() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -121,19 +153,23 @@ public class AccountFragment extends Fragment {
                 return;
             }
 
-            user.updateProfile(new UserProfileChangeRequest.Builder()
-                            .setDisplayName(newName)
-                            .build())
+            String userId = user.getUid();
+            usersRef.child(userId).child("name").setValue(newName)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(requireContext(), "User profile updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "User name updated", Toast.LENGTH_SHORT).show();
+                                if (nameUpdateListener != null) {
+                                    nameUpdateListener.onNameUpdated(newName);
+                                }
                             } else {
-                                Toast.makeText(requireContext(), "Failed to update user profile", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Failed to update user name", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+
+            editUser.setEnabled(false);
         }
     }
 

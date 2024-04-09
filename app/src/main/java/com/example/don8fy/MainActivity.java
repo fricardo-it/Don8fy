@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.don8fy.databinding.ActivityMainBinding;
+import com.example.don8fy.ui.account.AccountFragment;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
 import com.example.don8fy.ui.account.UserModel;
@@ -25,7 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AccountFragment.OnNameUpdateListener {
     RecyclerView recyclerView;
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -98,5 +99,14 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onNameUpdated(String newName) {
+        // Update User Name
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView nameHeaderTextView = headerView.findViewById(R.id.nameheader);
+        nameHeaderTextView.setText(newName);
     }
 }
