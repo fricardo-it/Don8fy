@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.don8fy.databinding.ActivityMainBinding;
 import com.example.don8fy.ui.account.AccountFragment;
+import com.example.don8fy.ui.account.UserModel;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
-import com.example.don8fy.ui.account.UserModel;
 import com.example.don8fy.ui.item.NewItemFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
