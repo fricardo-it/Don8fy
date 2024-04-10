@@ -142,7 +142,7 @@ public class DetailItemFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(@NonNull GoogleMap googleMap) {
         map = googleMap;
         if (positionMap != null) {
-            float zoom = 12.0f;
+            float zoom = 16.0f;
             String[] latLng = positionMap.split(",");
             double latitude = Double.parseDouble(latLng[0]);
             double longitude = Double.parseDouble(latLng[1]);

@@ -6,13 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.example.don8fy.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -24,34 +23,30 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 
-
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
-    Context context;
-    ArrayList<ItemModel> arrayList;
-
-    onItemClickListener listener;
-
+    private Context context;
+    private ArrayList<ItemModel> arrayList;
+    private OnItemClickListener listener;
     private DatabaseReference databaseReference;
-    private StorageReference storageReference;
 
     public ImageListAdapter(Context context, ArrayList<ItemModel> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
+        getItems(); // Carrega os itens ao criar o adaptador
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView title;
+        ImageButton favoriteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             title = itemView.findViewById(R.id.textViewProductName);
             imageView = itemView.findViewById(R.id.imageViewProduct);
-
+            favoriteButton = itemView.findViewById(R.id.fav_item);
         }
     }
 
@@ -64,31 +59,43 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        position = holder.getAdapterPosition();
         ItemModel item = arrayList.get(position);
         holder.title.setText(item.getName());
-        Log.d("ImageAdapter", "Image URI to download: " + item.getImageUri());
-        // Check if the image is already loaded
         if (item.getImageUri() != null && !item.getImageUri().isEmpty()) {
             Glide.with(context).load(item.getImageUri()).into(holder.imageView);
         } else {
-            // Load the image from storage if it's not already loaded
             loadImageFromStorage(item, holder.imageView);
-            // Use a placeholder image while loading
             Glide.with(context).load(R.drawable.ic_android).into(holder.imageView);
         }
 
+        if (item.getIsFavorite()) {
+            holder.favoriteButton.setImageResource(R.drawable.ic_menu_favorites);
+        } else {
+            holder.favoriteButton.setImageResource(R.drawable.ic_no_favorite);
+        }
+
+        final int itemPosition = position;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
-            int position = holder.getAdapterPosition();
             @Override
             public void onClick(View v) {
-                ItemModel itemSelected = arrayList.get(position);
-                if(listener != null){
-                    listener.onItemClick(itemSelected);
+                if (listener != null) {
+                    listener.onItemClick(arrayList.get(itemPosition));
                 }
             }
         });
 
+        holder.favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ItemModel item = arrayList.get(itemPosition);
+                item.setIsFavorite(!item.getIsFavorite());
+                if (item.getIsFavorite()) {
+                    holder.favoriteButton.setImageResource(R.drawable.ic_menu_favorites);
+                } else {
+                    holder.favoriteButton.setImageResource(R.drawable.ic_no_favorite);
+                }
+            }
+        });
     }
 
     @Override
@@ -96,38 +103,34 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
         return arrayList.size();
     }
 
-
     public void loadImageFromStorage(ItemModel item, ImageView imageView) {
-
-        // Initialize Firebase
         FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference("images/");
-
-        // Get a reference to the image in Firebase Storage
+        StorageReference storageReference = firebaseStorage.getReference("images/");
         StorageReference imageRef = storageReference.child((item.getImageUri()));
-
-        // Download the image from Firebase Storage
         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                // Load the image into the ImageView using Glide
                 Glide.with(context).load(uri).into(imageView);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // Handle any errors
                 Toast.makeText(context, "Failed to load image for item: " + item.getName(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void getItems() {
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
-        // Initialize Firebase
+    public interface OnItemClickListener {
+        void onItemClick(ItemModel item);
+    }
+
+    public void getItems() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("items");
-
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -135,7 +138,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ItemModel item = snapshot.getValue(ItemModel.class);
                     arrayList.add(item);
-
                 }
                 notifyDataSetChanged();
             }
@@ -146,15 +148,4 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             }
         });
     }
-
-    public void setOnItemClickListener(onItemClickListener listener){
-        this.listener = listener;
-    }
-
-    public interface onItemClickListener{
-        void onItemClick(ItemModel item);
-    }
-
-
-
 }

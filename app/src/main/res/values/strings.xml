@@ -37,5 +37,16 @@
     <string name="save_item">Save Item</string>
     <string name="title">Don8fy</string>
     <string name="detail_item">Detail Item</string>
+    <string name="item_image">Item Image</string>
+    <string name="product_name">Product Name</string>
+    <string name="product_description">Product Description</string>
+    <string name="edit_item">Edit Item</string>
+    <string name="item_picked_up">Item Picked Up</string>
+    <string name="set_location">Set Location</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="cancel_changes">Cancel changes</string>
+    <string name="edit_page">Edit Page</string>
+    <string name="favorite_item">Favorite Item</string>
 
 </resources>

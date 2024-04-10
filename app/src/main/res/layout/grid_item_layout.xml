@@ -12,19 +12,35 @@
         android:scaleType="centerCrop"
         android:src="@drawable/ic_android" />
 
-    <TextView
-        android:id="@+id/textViewProductName"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Product Name"
-        android:textAlignment="center"
-        android:textColor="@color/blue"
-        android:textSize="20sp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif" />
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/textViewProductName"
+            android:layout_width="218dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/product_name"
+            android:textAlignment="center"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/fav_item"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:contentDescription="@string/favorite_item"
+            android:src="@drawable/ic_no_favorite" />
+    </LinearLayout>
+
 
 </LinearLayout>
 

@@ -38,7 +38,7 @@
             android:id="@+id/btnTakePhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take Photo"
+            android:text="@string/take_photo"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/blue"/>
 
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Product Name:"
+            android:text="@string/product_name"
             android:textSize="20sp"
             android:layout_marginTop="8dp" />
 
@@ -54,14 +54,14 @@
             android:id="@+id/productName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product Name"/>
+            android:hint="@string/product_name"/>
 
         <TextView
             android:id="@+id/detailProductDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Product Description:"
+            android:text="@string/product_description"
             android:textSize="20sp"
             android:layout_marginTop="8dp" />
 
@@ -72,13 +72,13 @@
             android:inputType="textMultiLine"
             android:maxLines="5"
             android:scrollbars="vertical"
-            android:hint="Product Description"/>
+            android:hint="@string/product_description"/>
 
         <TextView
             android:id="@+id/setLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Location"
+            android:text="@string/set_location"
             android:textSize="20sp"
             android:layout_marginTop="15dp"/>
 
@@ -110,7 +110,8 @@
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/red"
                 android:text="@string/cancel"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 

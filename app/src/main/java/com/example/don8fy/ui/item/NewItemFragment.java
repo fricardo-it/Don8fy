@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,11 +36,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 public class NewItemFragment extends Fragment implements OnMapReadyCallback {
 
@@ -88,7 +96,8 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
         saveItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadImage();
+                uploadItem();
+
             }
         });
 
@@ -187,14 +196,86 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
         return Uri.parse(path);
     }
 
-    private void uploadImage() {
+    private void uploadItem() {
         if (imageUri != null) {
-            Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+            uploadImage(productImage);
         } else {
             Toast.makeText(requireContext(), "Please take or choose a photo first", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void uploadImage(ImageView image){
+        //Get the Bitmap from the ImageView
+        BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+        if (drawable == null){
+            Toast.makeText(requireContext(), "No Image Uploaded", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Bitmap bitmap = drawable.getBitmap();
+
+        //convert Bitmap into an Uri using a function
+        imageUri = getImageUri(bitmap);
+
+        //Upload the image to Firebase Storage
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageRef.child("images/"+ UUID.randomUUID().toString());
+
+        imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(requireContext(), "Image Uploaded Successfully!", Toast.LENGTH_SHORT).show();
+
+                //Get the Url of the uploaded image
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String itemName = name.getText().toString();
+                        String itemDescription = description.getText().toString();
+                        String uriImage = uri.toString();
+                        uploadItemToDatabase(itemName, itemDescription, uriImage, itemPosition);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(requireContext(), "Failed to retrieve image URL", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(requireContext(), "Fail on Upload Image", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void uploadItemToDatabase(String name, String description, String imageUrl, String map){
+
+        //Initialize Firebase RealTime Database
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
+
+        //upload the itemModel object to the Database
+        String itemId = databaseRef.push().getKey(); //generate a unique ID for the item
+        if (itemId != null){
+            //instantiate the ItemModel class
+            ItemModel itemModel = new ItemModel(itemId, name, description, imageUrl, map, false);
+            databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Toast.makeText(requireContext(), "New Item Saved!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(requireContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(requireContext(), "Error: New Item NOT Saved!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         locationMap = googleMap;
@@ -220,7 +301,7 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
             public void onSuccess(Location location) {
                 if (location != null) {
                     currentLocation = location;
-                    float zoom = 12.0f;
+                    float zoom = 16.0f;
                     LatLng mapPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     locationMap.addMarker(new MarkerOptions().position(mapPosition).title("Object Location"));
                     locationMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapPosition, zoom));
