@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.don8fy.databinding.ActivityMainBinding;
 import com.example.don8fy.ui.account.AccountFragment;
 import com.example.don8fy.ui.account.UserModel;
+import com.example.don8fy.ui.item.DetailPage;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
 import com.example.don8fy.ui.item.NewItemFragment;
@@ -96,6 +97,19 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
 
         adapter.getItems();
 
+        adapter.setOnItemClickListener(new ImageListAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(ItemModel item) {
+                // Abrir DetailPage com os detalhes do item
+                Intent intent = new Intent(MainActivity.this, DetailPage.class);
+                intent.putExtra("name", item.getName());
+                intent.putExtra("description", item.getDescription());
+                intent.putExtra("url", item.getImageUri());
+                intent.putExtra("itemId", item.getItemId());
+                intent.putExtra("positionMap", item.getPositionMap());
+                startActivity(intent);
+            }
+        });
         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -121,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
             }
         });
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
