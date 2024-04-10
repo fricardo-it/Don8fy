@@ -1,43 +1,50 @@
 package com.example.don8fy.ui.home;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.don8fy.MainActivity;
 import com.example.don8fy.R;
-import com.example.don8fy.ui.item.ImageListAdapter;
-import com.example.don8fy.ui.item.ItemModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private ImageListAdapter adapter;
+    public HomeFragment() {}
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        recyclerView = root.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ImageListAdapter(getContext(), new ArrayList<ItemModel>());
-        recyclerView.setAdapter(adapter);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
 
-        ImageView searchImageView = root.findViewById(R.id.imageViewSearch);
-        EditText searchText = root.findViewById(R.id.txtSearch);
-        ImageView filterImageView = root.findViewById(R.id.filter);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (!isMainActivityRunning()) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            startActivity(intent);
+        }
+    }
 
-        return root;
+    // Método para verificar se MainActivity está em execução
+    private boolean isMainActivityRunning() {
+        ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+        for (ActivityManager.RunningTaskInfo task : tasks) {
+            if (task.topActivity.getClassName().equals(MainActivity.class.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

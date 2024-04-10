@@ -23,24 +23,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.don8fy.MainActivity;
 import com.example.don8fy.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 public class NewItemFragment extends Fragment {
 
     private ImageView productImage;
     private EditText name, description;
-    private Button takePhoto, saveItem;
+    private Button takePhoto, saveItem, cancelRegisterItem;
     private Uri imageUri;
 
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
@@ -57,6 +50,8 @@ public class NewItemFragment extends Fragment {
         description = view.findViewById(R.id.productDescription);
         takePhoto = view.findViewById(R.id.btnTakePhoto);
         saveItem = view.findViewById(R.id.btnSave);
+        cancelRegisterItem = view.findViewById(R.id.btnCancel);
+
 
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +67,14 @@ public class NewItemFragment extends Fragment {
             }
         });
 
+        cancelRegisterItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(requireContext(), "Register canceled.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
@@ -104,7 +107,11 @@ public class NewItemFragment extends Fragment {
 
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+        if (cameraIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+        } else {
+            Toast.makeText(requireContext(), "No camera app found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openGallery() {
@@ -156,51 +163,9 @@ public class NewItemFragment extends Fragment {
 
     private void uploadImage() {
         if (imageUri != null) {
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imageRef = storageRef.child("images/" + UUID.randomUUID().toString());
-
-            imageRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String imageUrl = uri.toString();
-                            String itemName = name.getText().toString();
-                            String itemDescription = description.getText().toString();
-                            uploadItem(itemName, itemDescription, imageUrl);
-                        }
-                    });
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(requireContext(), "Failed to upload image", Toast.LENGTH_SHORT).show();
-                }
-            });
+           Toast.makeText(requireContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(requireContext(), "Please take or choose a photo first", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void uploadItem(String name, String description, String imageUrl) {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference("items");
-        String itemId = databaseRef.push().getKey();
-
-        if (itemId != null) {
-            ItemModel itemModel = new ItemModel(itemId, name, description, imageUrl, "");
-            databaseRef.child(itemId).setValue(itemModel).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Toast.makeText(requireContext(), "New Item Saved!", Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(requireContext(), "Error: New Item NOT Saved!", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 }
