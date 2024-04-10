@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.don8fy.databinding.ActivityMainBinding;
 import com.example.don8fy.ui.account.AccountFragment;
 import com.example.don8fy.ui.account.UserModel;
-import com.example.don8fy.ui.item.DetailPage;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
 import com.example.don8fy.ui.item.NewItemFragment;
@@ -100,15 +99,18 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         adapter.setOnItemClickListener(new ImageListAdapter.onItemClickListener() {
             @Override
             public void onItemClick(ItemModel item) {
-                // Abrir DetailPage com os detalhes do item
-                Intent intent = new Intent(MainActivity.this, DetailPage.class);
-                intent.putExtra("name", item.getName());
-                intent.putExtra("description", item.getDescription());
-                intent.putExtra("url", item.getImageUri());
-                intent.putExtra("itemId", item.getItemId());
-                intent.putExtra("positionMap", item.getPositionMap());
-                startActivity(intent);
+                // Navegar para DetailItemFragment com os detalhes do item
+                Bundle bundle = new Bundle();
+                bundle.putString("name", item.getName());
+                bundle.putString("description", item.getDescription());
+                bundle.putString("url", item.getImageUri());
+                bundle.putString("itemId", item.getItemId());
+                bundle.putString("positionMap", item.getPositionMap());
+
+                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
+                navController.navigate(R.id.nav_detail_item, bundle);
             }
+
         });
         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
