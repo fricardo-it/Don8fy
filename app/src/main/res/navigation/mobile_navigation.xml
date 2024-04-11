@@ -16,7 +16,6 @@
             app:destination="@id/nav_new_item" />
     </fragment>
 
-
     <fragment
         android:id="@+id/nav_search"
         android:name="com.example.don8fy.ui.search.SearchFragment"

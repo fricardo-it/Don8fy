@@ -8,6 +8,18 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
+                  <entry key="main_activity">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="135" />
+                            <option name="y" value="-275" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="nav_account">
                     <value>
                       <LayoutPositions>
@@ -55,6 +67,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_home_to_main_activity">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_new_item">
                               <value>
                                 <LayoutPositions />

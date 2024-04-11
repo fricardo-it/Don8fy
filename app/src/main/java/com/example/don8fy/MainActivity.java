@@ -1,5 +1,6 @@
 package com.example.don8fy;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -50,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         setSupportActionBar(binding.appBarMain.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
-
 
         binding.appBarMain.toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
             }
 
         });
+
         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
                     if (!getClass().getSimpleName().equals(MainActivity.class.getSimpleName())) {
                         // Cria um Intent para abrir a MainActivity
                         Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Limpa o topo da pilha de atividades
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
                 } else {
@@ -178,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
         if (currentFragment instanceof NewItemFragment) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
             super.onBackPressed();
         }
