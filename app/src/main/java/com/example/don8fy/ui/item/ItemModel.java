@@ -4,10 +4,8 @@ package com.example.don8fy.ui.item;
 public class ItemModel {
 
     private String itemId, name, description, imageUri, positionMap;
-    private Boolean isFavorite;
 
     // Constructor
-
     public ItemModel() {
     }
 
@@ -20,7 +18,6 @@ public class ItemModel {
     }
 
     // Getters and setters
-
     public String getItemId() {
         return itemId;
     }

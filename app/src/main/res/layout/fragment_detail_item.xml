@@ -38,18 +38,12 @@
             android:textSize="20sp"
             android:layout_marginTop="15dp" />
 
-        <FrameLayout
+        <fragment
+            android:id="@+id/maps"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="30dp"
-            android:id="@+id/maps">
-            <fragment
-                android:id="@+id/maps_fragment"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:ignore="FragmentTagUsage" />
-        </FrameLayout>
+            android:layout_height="242dp"
+            tools:ignore="FragmentTagUsage" />
 
         <LinearLayout
             android:layout_width="match_parent"
