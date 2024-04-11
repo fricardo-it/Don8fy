@@ -106,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
                 bundle.putString("url", item.getImageUri());
                 bundle.putString("itemId", item.getItemId());
                 bundle.putString("positionMap", item.getPositionMap());
-                bundle.putBoolean("isFavorite", item.getIsFavorite());
-
 
                 NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
                 navController.navigate(R.id.nav_detail_item, bundle);

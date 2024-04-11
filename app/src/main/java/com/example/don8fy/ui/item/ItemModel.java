@@ -17,7 +17,6 @@ public class ItemModel {
         this.description = description;
         this.imageUri = imageUri;
         this.positionMap = positionMap;
-        this.isFavorite = isFavorite;
     }
 
     // Getters and setters
@@ -62,11 +61,4 @@ public class ItemModel {
         this.positionMap = positionMap;
     }
 
-    public Boolean getIsFavorite() {
-        return isFavorite;
-    }
-
-    public void setIsFavorite(Boolean isFavorite) {
-        this.isFavorite = isFavorite;
-    }
 }
