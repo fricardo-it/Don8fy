@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
                 NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
                 navController.navigate(R.id.nav_detail_item, bundle);
             }
-
         });
+
 
          // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -191,16 +191,33 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         nameHeaderTextView.setText(newName);
     }
 
+
     @Override
     public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
-        if (currentFragment instanceof NewItemFragment) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
     }
+//    @Override
+//    public void onBackPressed() {
+//        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
+//        if (currentFragment instanceof NewItemFragment) {
+//            Intent intent = new Intent(this, MainActivity.class);
+//            startActivity(intent);
+//            finish();
+//        } else {
+//            super.onBackPressed();
+//        }
+//
+//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
 
 }

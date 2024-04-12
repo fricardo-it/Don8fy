@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,6 +74,30 @@ public class DetailItemFragment extends Fragment implements OnMapReadyCallback {
         productName.setText(name);
         productDescription.setText(description);
         Glide.with(requireActivity()).load(imageUri).into(productImage);
+
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+
+            // hide title
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+            // Adiciona um botão personalizado
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(R.layout.custom_action_bar);
+
+            // Configura o clique no botão personalizado
+            View customActionBarView = actionBar.getCustomView();
+            ImageButton customButton = customActionBarView.findViewById(R.id.custom_button);
+            customButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    startActivity(intent);
+                    requireActivity().finish();
+                }
+            });
+        }
 
         // Initializing the map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.maps);

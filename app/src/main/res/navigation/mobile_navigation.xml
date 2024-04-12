@@ -12,10 +12,6 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_new_item"
-            app:destination="@id/nav_new_item" />
-
-        <action
             android:id="@+id/action_home_to_mainActivity"
             app:destination="@id/main_activity" />
     </fragment>

@@ -142,13 +142,14 @@ public class SignUpPage extends AppCompatActivity {
 
                             UserModel userModel = new UserModel(userName, userEmail, userPassword);
                             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            databaseRef.child(userId).setValue(user)
+                            databaseRef.child(userId).setValue(userModel)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             Intent intent = new Intent(SignUpPage.this, LoginPage.class);
                                             intent.putExtra("password", userPassword);
                                             intent.putExtra("email", userEmail);
+                                            intent.putExtra("name", userName);
                                             startActivity(intent);
                                             finish();
                                         }

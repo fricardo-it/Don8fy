@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -86,10 +87,28 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
             mapFragment.getMapAsync(this);
         }
 
-        // Configura a barra de ação para ocultar o botão "Back"
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(false);
+
+            // hide title
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+
+            // Adiciona um botão personalizado
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setCustomView(R.layout.custom_action_bar);
+
+            // Configura o clique no botão personalizado
+            View customActionBarView = actionBar.getCustomView();
+            ImageButton customButton = customActionBarView.findViewById(R.id.custom_button);
+            customButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(requireActivity(), MainActivity.class);
+                    startActivity(intent);
+                    requireActivity().finish();
+                }
+            });
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());

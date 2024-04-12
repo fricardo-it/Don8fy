@@ -1,7 +1,5 @@
 package com.example.don8fy.ui.access;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
