@@ -55,7 +55,7 @@ public class LoginPage extends AppCompatActivity {
 
         btnSignIn = findViewById(R.id.loginbtn);
         txtSignUp = findViewById(R.id.signupbtn);
-        txtSignUp = findViewById(R.id.forgotbtn);
+        txtClickHere = findViewById(R.id.forgotbtn);
 
         btnEye = findViewById(R.id.eyebtn);
         email = findViewById(R.id.emailtxt);
@@ -101,7 +101,7 @@ public class LoginPage extends AppCompatActivity {
     }
 
     private void showForgotPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Forgot Password");
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
