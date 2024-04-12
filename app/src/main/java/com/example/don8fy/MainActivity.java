@@ -74,6 +74,19 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.nav_home) {
+                // Navegue para a MainActivity quando o item HOME for selecionado
+                navController.navigate(R.id.action_home_to_mainActivity);
+                return true;
+            }
+            return false;
+        });
+
+
+
+
         View headerView = navigationView.getHeaderView(0);
         TextView nameHeaderTextView = headerView.findViewById(R.id.nameheader);
         TextView emailHeaderTextView = headerView.findViewById(R.id.emailheader);
@@ -115,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
 
         });
 
-        // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
+         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -128,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
                         Intent intent = new Intent(MainActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        finish();
                     }
                 } else {
                     NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);

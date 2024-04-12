@@ -21,6 +21,7 @@
     <string name="have_an_account">Have an Account?</string>
     <string name="register">Register</string>
     <string name="forgot_password">Forgot Password?</string>
+    <string name="click_here">Click here!</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_in">Sign In</string>
     <string name="show_password">Show Password</string>
@@ -48,5 +49,6 @@
     <string name="cancel_changes">Cancel changes</string>
     <string name="edit_page">Edit Page</string>
     <string name="favorite_item">Favorite Item</string>
+    <string name="enter_your_e_mail">Enter your e-mail</string>
 
 </resources>

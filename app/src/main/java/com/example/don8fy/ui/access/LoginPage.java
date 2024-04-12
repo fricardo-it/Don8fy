@@ -1,5 +1,8 @@
 package com.example.don8fy.ui.access;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.don8fy.MainActivity;
@@ -32,7 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginPage extends AppCompatActivity {
     Button btnSignIn;
-    TextView txtSignUp;
+    TextView txtSignUp, txtClickHere;
     EditText email, password;
     ImageButton btnEye;
     String userEmail, userPassword;
@@ -51,6 +55,8 @@ public class LoginPage extends AppCompatActivity {
 
         btnSignIn = findViewById(R.id.loginbtn);
         txtSignUp = findViewById(R.id.signupbtn);
+        txtSignUp = findViewById(R.id.forgotbtn);
+
         btnEye = findViewById(R.id.eyebtn);
         email = findViewById(R.id.emailtxt);
         password = findViewById(R.id.passwordtxt);
@@ -85,7 +91,59 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        txtClickHere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showForgotPasswordDialog();
+            }
+        });
     }
+
+    private void showForgotPasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Forgot Password");
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
+        builder.setView(dialogView);
+
+        EditText currentemail = dialogView.findViewById(R.id.currentemail);
+
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email = currentemail.getText().toString().trim();
+                if (!TextUtils.isEmpty(email)) {
+                    sendPasswordResetEmail(email);
+                } else {
+                    Toast.makeText(LoginPage.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+    private void sendPasswordResetEmail(String email) {
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(LoginPage.this, "Password reset email sent to " + email, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(LoginPage.this, "Failed to send password reset email", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 
     private void loginUser() {
         userEmail = email.getText().toString().trim();

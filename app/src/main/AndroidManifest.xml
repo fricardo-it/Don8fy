@@ -51,9 +51,6 @@
             android:name=".ui.account.SignUpPage"
             android:exported="false" />
         <activity
-            android:name=".ui.item.DetailPage"
-            android:exported="false" />
-        <activity
             android:name=".ui.item.EditItemPage"
             android:exported="false" />
         <activity

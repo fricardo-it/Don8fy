@@ -147,7 +147,7 @@ public class SignUpPage extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             Intent intent = new Intent(SignUpPage.this, LoginPage.class);
-                                            intent.putExtra("name", userName);
+                                            intent.putExtra("password", userPassword);
                                             intent.putExtra("email", userEmail);
                                             startActivity(intent);
                                             finish();
