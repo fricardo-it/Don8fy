@@ -94,11 +94,9 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
             // hide title
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-            // Adiciona um botão personalizado
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setCustomView(R.layout.custom_action_bar);
 
-            // Configura o clique no botão personalizado
             View customActionBarView = actionBar.getCustomView();
             ImageButton customButton = customActionBarView.findViewById(R.id.custom_button);
             customButton.setOnClickListener(new View.OnClickListener() {

@@ -97,7 +97,6 @@ public class LoginPage extends AppCompatActivity {
             }
         });
     }
-
     private void showForgotPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Forgot Password");
@@ -167,9 +166,11 @@ public class LoginPage extends AppCompatActivity {
                                     String userName = snapshot.child("name").getValue(String.class);
                                     String userEmail = snapshot.child("email").getValue(String.class);
                                     String userPassword = snapshot.child("password").getValue(String.class);
+                                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                                     // Atualize as preferências compartilhadas com os dados do usuário
                                     SharedPreferences.Editor editor = getSharedPreferences("UserData", MODE_PRIVATE).edit();
+                                    editor.putString("userId", userId);
                                     editor.putString("email", userEmail);
                                     editor.putString("name", userName);
                                     editor.putString("password", userPassword);

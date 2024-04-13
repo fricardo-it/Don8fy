@@ -1,0 +1,26 @@
+<!-- custom_action_bar.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="?attr/colorPrimary">
+
+    <ImageButton
+        android:id="@+id/custom_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_home"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:contentDescription="@string/menu_home"
+        app:tint="@color/white" />
+    <TextView
+        android:id="@+id/custom_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+    android:text="Detail Item" />
+</LinearLayout>

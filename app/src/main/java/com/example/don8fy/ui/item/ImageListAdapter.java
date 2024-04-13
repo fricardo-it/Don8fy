@@ -1,6 +1,8 @@
 package com.example.don8fy.ui.item;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.don8fy.R;
+import com.example.don8fy.ui.account.UserModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,21 +28,21 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.ViewHolder> {
-    private Context context;
-    private List<ItemModel> arrayList;
+    private final Context context;
+    private final List<ItemModel> arrayList;
+    private final UserModel currentUser;
     private OnItemClickListener listener;
-    private DatabaseReference databaseReference;
     private List<String> favoriteItems;
 
-    public ImageListAdapter(Context context, List<ItemModel> arrayList) {
+    // Modificação do tipo do parâmetro currentUser no construtor
+    public ImageListAdapter(Context context, List<ItemModel> arrayList, UserModel currentUser) {
         this.context = context;
         this.arrayList = arrayList;
-        this.favoriteItems = new ArrayList<>();
-        getItems(); // Carrega os itens ao criar o adaptador
+        this.currentUser = currentUser;
+        this.favoriteItems = currentUser.getFavoriteItems();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -51,7 +54,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             super(itemView);
             title = itemView.findViewById(R.id.textViewProductName);
             imageView = itemView.findViewById(R.id.imageViewProduct);
-            btnFavorite = itemView.findViewById(R.id.fav_item);
+            btnFavorite = itemView.findViewById(R.id.btn_fav_item);
         }
     }
 
@@ -73,7 +76,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
             Glide.with(context).load(R.drawable.ic_android).into(holder.imageView);
         }
 
-        // Verifica se o item está na lista de favoritos e atualiza a imagem do botão de favoritos
         if (favoriteItems.contains(item.getItemId())) {
             holder.btnFavorite.setImageResource(R.drawable.ic_menu_favorites);
         } else {
@@ -101,15 +103,12 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                 // Se o item já for um favorito, remova-o da lista de favoritos; caso contrário, adicione-o
                 if (isFavorite) {
                     removeItemFromFavorites(item.getItemId());
+                    holder.btnFavorite.setImageResource(R.drawable.ic_no_favorite);
+
                 } else {
                     addItemToFavorites(item.getItemId());
-                }
-
-                // Atualiza a imagem do botão de favoritos com base no novo status do item favorito
-                if (isFavorite) {
-                    holder.btnFavorite.setImageResource(R.drawable.ic_no_favorite);
-                } else {
                     holder.btnFavorite.setImageResource(R.drawable.ic_menu_favorites);
+
                 }
             }
         });
@@ -146,9 +145,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
     }
 
     public void getItems() {
+        SharedPreferences prefs = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", null);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("items");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference itemsRef = firebaseDatabase.getReference("items");
+        assert userId != null;
+        DatabaseReference userRef = firebaseDatabase.getReference("users").child(userId).child("favoriteItems");
+
+        itemsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 arrayList.clear();
@@ -156,28 +160,81 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.View
                     ItemModel item = snapshot.getValue(ItemModel.class);
                     arrayList.add(item);
                 }
-                notifyDataSetChanged();
+
+                // Após carregar a lista de itens, carregue a lista de favoritos do usuário
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        favoriteItems.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String itemId = snapshot.getKey();
+                            favoriteItems.add(itemId);
+                        }
+
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(context, "Failed to retrieve favorite items", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(context, "Failed to retrieve data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Failed to retrieve items", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Método para verificar se um item está na lista de favoritos
-    private boolean isItemFavorite(String itemId) {
-        return favoriteItems.contains(itemId);
-    }
-
-    // Método para adicionar um item à lista de favoritos
     private void addItemToFavorites(String itemId) {
-        favoriteItems.add(itemId);
+        SharedPreferences prefs = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", null);
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+        userRef.child("favoriteItems").child(itemId).setValue(true)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(context, "Item favorited", Toast.LENGTH_SHORT).show();
+                        favoriteItems.add(itemId);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(context, "Error to favorite item", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // Método para remover um item da lista de favoritos
     private void removeItemFromFavorites(String itemId) {
-        favoriteItems.remove(itemId);
+        SharedPreferences prefs = context.getSharedPreferences("UserData", Context.MODE_PRIVATE);
+        String userId = prefs.getString("userId", null);
+
+        if (userId != null) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            userRef.child("favoriteItems").child(itemId).removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(context, "Unfavorited item", Toast.LENGTH_SHORT).show();
+                            favoriteItems.remove(itemId);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context, "Error to uncheck favorite item", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(context, "User ID not found", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
+
 }

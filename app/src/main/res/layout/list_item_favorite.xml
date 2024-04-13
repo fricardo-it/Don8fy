@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageProductFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_android" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/textProductNameFavorites"
+            android:layout_width="218dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/product_name"
+            android:textAlignment="center"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/showed_item_favorites"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:contentDescription="@string/favorite_item"
+            android:src="@drawable/ic_no_favorite" />
+    </LinearLayout>
+
+
+</LinearLayout>
+

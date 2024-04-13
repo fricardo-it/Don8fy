@@ -1,6 +1,5 @@
 package com.example.don8fy;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,11 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,7 +23,6 @@ import com.example.don8fy.ui.account.AccountFragment;
 import com.example.don8fy.ui.account.UserModel;
 import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
-import com.example.don8fy.ui.item.NewItemFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -40,8 +35,13 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
     private ActivityMainBinding binding;
     private ImageListAdapter adapter;
     private ArrayList<ItemModel> itemList;
+    private String userId;
 
     private UserModel currentUser;
+
+    public UserModel getCurrentUser() {
+        return currentUser;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,15 +77,11 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
-                // Navegue para a MainActivity quando o item HOME for selecionado
                 navController.navigate(R.id.action_home_to_mainActivity);
                 return true;
             }
             return false;
         });
-
-
-
 
         View headerView = navigationView.getHeaderView(0);
         TextView nameHeaderTextView = headerView.findViewById(R.id.nameheader);
@@ -95,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         String nameUser = prefs.getString("name", "");
         String emailUser = prefs.getString("email", "");
         String passwUser = prefs.getString("password", "");
+        userId = prefs.getString("userId", "");
 
         currentUser = new UserModel(nameUser, emailUser, passwUser);
 
@@ -106,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         itemList = new ArrayList<>();
-        adapter = new ImageListAdapter(MainActivity.this, itemList);
+        adapter = new ImageListAdapter(MainActivity.this, itemList, currentUser);
         recyclerView.setAdapter(adapter);
 
         adapter.getItems();
@@ -127,8 +124,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
             }
         });
 
-
-         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
+        // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -154,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
             }
         });
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -190,34 +185,5 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         TextView nameHeaderTextView = headerView.findViewById(R.id.nameheader);
         nameHeaderTextView.setText(newName);
     }
-
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-//    @Override
-//    public void onBackPressed() {
-//        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
-//        if (currentFragment instanceof NewItemFragment) {
-//            Intent intent = new Intent(this, MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        } else {
-//            super.onBackPressed();
-//        }
-//
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
 
 }
