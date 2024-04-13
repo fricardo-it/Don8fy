@@ -9,7 +9,7 @@ public class ItemModel {
     public ItemModel() {
     }
 
-    public ItemModel(String itemId, String name, String description, String imageUri, String positionMap, Boolean isFavorite) {
+    public ItemModel(String itemId, String name, String description, String imageUri, String positionMap) {
         this.itemId = itemId;
         this.name = name;
         this.description = description;
