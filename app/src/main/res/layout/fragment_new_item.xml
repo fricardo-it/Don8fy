@@ -29,14 +29,13 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="25dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_add_photo"
-            app:tint="@color/blue" />
+            android:src="@drawable/ic_add_photo" />
 
         <Button
             android:id="@+id/btnTakePhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/take_photo"
+            android:text="@string/upload_photo"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/blue"/>
 
