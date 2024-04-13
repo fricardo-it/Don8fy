@@ -56,7 +56,7 @@ import java.util.UUID;
 public class NewItemFragment extends Fragment implements OnMapReadyCallback {
     ImageView productImage;
     EditText name, description;
-    Button takePhoto, saveItem, cancelItem;
+    Button uploadPhoto, saveItem, cancelItem;
     Uri imageUri;
     String itemPosition;
 
@@ -75,13 +75,17 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
         productImage = view.findViewById(R.id.imageProduct);
         name = view.findViewById(R.id.productName);
         description = view.findViewById(R.id.productDescription);
-        takePhoto = view.findViewById(R.id.btnTakePhoto);
+        uploadPhoto = view.findViewById(R.id.btnUploadPhoto);
         saveItem = view.findViewById(R.id.btnSaveNewItem);
         cancelItem = view.findViewById(R.id.btnCancelNewItem);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
         }
 
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
@@ -110,7 +114,7 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
-        takePhoto.setOnClickListener(new View.OnClickListener() {
+        uploadPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOptionsDialog();
@@ -182,7 +186,7 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
 
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera(); // Abrir a câmera se a permissão for concedida
+                openCamera();
             } else {
                 Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
             }

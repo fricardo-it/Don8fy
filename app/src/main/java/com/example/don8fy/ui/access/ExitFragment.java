@@ -26,9 +26,10 @@ public class ExitFragment extends Fragment {
         editor.clear();
         editor.apply();
 
-        // Fecha completamente
-        System.exit(0);
+        // Finaliza todas as atividades associadas à tarefa atual
+        requireActivity().finishAffinity();
 
         return null;
     }
 }
+
