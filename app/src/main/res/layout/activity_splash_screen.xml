@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="241dp"
-        android:src="@drawable/don8fylogo"
+        android:src="@drawable/don8fylogopng"
         android:contentDescription="@string/don8fy_logo" />
 
     <TextView

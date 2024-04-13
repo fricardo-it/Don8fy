@@ -13,7 +13,7 @@
         android:layout_height="155dp"
         android:layout_gravity="center"
         android:layout_margin="50dp"
-        android:src="@drawable/don8fylogo" />
+        android:src="@drawable/don8fylogopng" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,6 +68,7 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:src="@drawable/ic_show"
+            android:tint="@color/blue"
             android:contentDescription="@string/show_password" />
 
     </LinearLayout>
@@ -80,6 +81,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
         android:textSize="25sp"
         app:cornerRadius="5dp"
         android:text="@string/sign_in"/>

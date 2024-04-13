@@ -32,11 +32,6 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements AccountFragment.OnNameUpdateListener {
     RecyclerView recyclerView;
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
-    private ImageListAdapter adapter;
-    private ArrayList<ItemModel> itemList;
-    private String userId;
-
     private UserModel currentUser;
 
     public UserModel getCurrentUser() {
@@ -47,27 +42,22 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        com.example.don8fy.databinding.ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
 
-        binding.appBarMain.toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Don8fy Main Menu", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.toolbar).show();
-            }
-        });
+        binding.appBarMain.toolbar.setOnClickListener(view -> Snackbar.make(view, "Don8fy Main Menu", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .setAnchorView(R.id.toolbar).show());
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_favorites, R.id.nav_account, R.id.nav_search, R.id.nav_settings, R.id.nav_logout)
+                R.id.nav_home, R.id.nav_favorites, R.id.nav_account, R.id.nav_logout)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -91,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         String nameUser = prefs.getString("name", "");
         String emailUser = prefs.getString("email", "");
         String passwUser = prefs.getString("password", "");
-        userId = prefs.getString("userId", "");
+        //String userId = prefs.getString("userId", "");
 
         currentUser = new UserModel(nameUser, emailUser, passwUser);
 
@@ -102,26 +92,23 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        itemList = new ArrayList<>();
-        adapter = new ImageListAdapter(MainActivity.this, itemList, currentUser);
+        ArrayList<ItemModel> itemList = new ArrayList<>();
+        ImageListAdapter adapter = new ImageListAdapter(MainActivity.this, itemList, currentUser);
         recyclerView.setAdapter(adapter);
 
         adapter.getItems();
 
-        adapter.setOnItemClickListener(new ImageListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(ItemModel item) {
-                // Navegar para DetailItemFragment com os detalhes do item
-                Bundle bundle = new Bundle();
-                bundle.putString("name", item.getName());
-                bundle.putString("description", item.getDescription());
-                bundle.putString("url", item.getImageUri());
-                bundle.putString("itemId", item.getItemId());
-                bundle.putString("positionMap", item.getPositionMap());
+        adapter.setOnItemClickListener(item -> {
+            // Navegar para DetailItemFragment com os detalhes do item
+            Bundle bundle = new Bundle();
+            bundle.putString("name", item.getName());
+            bundle.putString("description", item.getDescription());
+            bundle.putString("url", item.getImageUri());
+            bundle.putString("itemId", item.getItemId());
+            bundle.putString("positionMap", item.getPositionMap());
 
-                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
-                navController.navigate(R.id.nav_detail_item, bundle);
-            }
+            NavController navController1 = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
+            navController1.navigate(R.id.nav_detail_item, bundle);
         });
 
         // Adiciona um listener para o NavigationView para tratar os cliques nos itens do menu
@@ -132,13 +119,12 @@ public class MainActivity extends AppCompatActivity implements AccountFragment.O
 
                 if (id == R.id.nav_home) {
                     // Se já estamos na MainActivity, não faz nada
-                    if (!getClass().getSimpleName().equals(MainActivity.class.getSimpleName())) {
-                        // Cria um Intent para abrir a MainActivity
-                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                    }
+                    getClass().getSimpleName();
+                    MainActivity.class.getSimpleName();// Cria um Intent para abrir a MainActivity
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
                 } else {
                     NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment_content_main);
                     navController.navigate(id);

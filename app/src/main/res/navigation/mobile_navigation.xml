@@ -22,12 +22,6 @@
         android:label="@string/app_name" />
 
     <fragment
-        android:id="@+id/nav_search"
-        android:name="com.example.don8fy.ui.search.SearchFragment"
-        android:label="@string/menu_search"
-        tools:layout="@layout/fragment_search" />
-
-    <fragment
         android:id="@+id/nav_account"
         android:name="com.example.don8fy.ui.account.AccountFragment"
         android:label="@string/menu_account"
@@ -38,12 +32,6 @@
         android:name="com.example.don8fy.ui.favorites.FavoritesFragment"
         android:label="@string/menu_favorites"
         tools:layout="@layout/fragment_favorites" />
-
-    <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.example.don8fy.ui.settings.SettingsFragment"
-        android:label="@string/menu_settings"
-        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/nav_logout"

@@ -50,5 +50,6 @@
     <string name="edit_page">Edit Page</string>
     <string name="favorite_item">Favorite Item</string>
     <string name="enter_your_e_mail">Enter your e-mail</string>
+    <string name="no_favorite_item">Sorry... :\'( \n\n\n There is no favorite item!</string>
 
 </resources>

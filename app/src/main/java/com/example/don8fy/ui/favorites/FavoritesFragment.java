@@ -1,5 +1,7 @@
 package com.example.don8fy.ui.favorites;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,14 +10,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.don8fy.MainActivity;
 import com.example.don8fy.R;
-import com.example.don8fy.databinding.FragmentFavoritesBinding;
 import com.example.don8fy.ui.account.UserModel;
+import com.example.don8fy.ui.item.ImageListAdapter;
 import com.example.don8fy.ui.item.ItemModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,76 +29,87 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoritesFragment extends Fragment {
+public class FavoritesFragment extends Fragment implements FavoriteListAdapter.OnFavoriteClickListener {
 
-    private FragmentFavoritesBinding binding;
-
-    RecyclerView recyclerView;
-    FavoriteListAdapter adapter;
-    List<ItemModel> favoriteItemList;
-
+    private FavoriteListAdapter adapter;
+    private List<ItemModel> favoriteItemList;
     private UserModel currentUser;
+    View rootView;
+    RecyclerView recyclerView;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Obtendo uma referência ao MainActivity a partir do contexto do fragmento
-        if (getActivity() != null && getActivity() instanceof MainActivity) {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            // Obtendo o usuário atual do MainActivity
-            currentUser = mainActivity.getCurrentUser();
-        }
-
-        // Verificando se o usuário atual é nulo
-        if (currentUser == null) {}
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
+        rootView = inflater.inflate(R.layout.fragment_favorites, container, false);
         recyclerView = rootView.findViewById(R.id.favoriteRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         favoriteItemList = new ArrayList<>();
         adapter = new FavoriteListAdapter(getActivity(), favoriteItemList);
         recyclerView.setAdapter(adapter);
-        loadFavoriteItems(); // Método para carregar os itens favoritos do usuário
+
+        // Set the click listener for the adapter
+        adapter.setOnFavoriteClickListener(this);
+
+        // Initialize currentUser
+        if (getActivity() != null && getActivity() instanceof MainActivity) {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            currentUser = mainActivity.getCurrentUser();
+        }
+
+        loadFavoriteItems(); // Call loadFavoriteItems() after currentUser initialization
+
         return rootView;
     }
 
+
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onFavoriteClick(ItemModel item, int position) {
+        // Abrir a tela de detalhes do item quando um item favorito for clicado
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+        Bundle bundle = new Bundle();
+        bundle.putString("name", item.getName());
+        bundle.putString("description", item.getDescription());
+        bundle.putString("url", item.getImageUri());
+        bundle.putString("itemId", item.getItemId());
+        bundle.putString("positionMap", item.getPositionMap());
+        navController.navigate(R.id.nav_detail_item, bundle);
     }
+
 
     private void loadFavoriteItems() {
-        // Limpa a lista antes de carregar os favoritos
         favoriteItemList.clear();
 
-        // Obtém a lista de IDs dos favoritos do usuário atual
-        List<String> favoriteItems = currentUser.getFavoriteItems();
+        if (currentUser != null) {
+            List<String> favoriteItems = currentUser.getFavoriteItems();
 
-        // Itera sobre os IDs dos favoritos e busca os detalhes de cada item no banco de dados
-        for (String itemId : favoriteItems) {
-            DatabaseReference itemRef = FirebaseDatabase.getInstance().getReference("items").child(itemId);
-            itemRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        // Converte o snapshot em um objeto ItemModel e adiciona à lista de favoritos
-                        ItemModel item = snapshot.getValue(ItemModel.class);
-                        favoriteItemList.add(item);
-                        adapter.notifyDataSetChanged();
+            for (String itemId : favoriteItems) {
+                DatabaseReference itemRef = FirebaseDatabase.getInstance().getReference("items").child(itemId);
+                itemRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            ItemModel item = snapshot.getValue(ItemModel.class);
+                            favoriteItemList.add(item);
+                            adapter.notifyDataSetChanged();
+
+                            TextView emptyFavoritesMessage = rootView.findViewById(R.id.emptyFavoritesMessage);
+                            // Check if the favoriteItemList is empty
+                            if (favoriteItemList.isEmpty()) {
+                                recyclerView.setVisibility(View.GONE);
+                                emptyFavoritesMessage.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerView.setVisibility(View.VISIBLE);
+                                emptyFavoritesMessage.setVisibility(View.GONE);
+                            }
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    // Trate o erro de carregamento dos favoritos, se necessário
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+            }
+
         }
     }
-
 }
