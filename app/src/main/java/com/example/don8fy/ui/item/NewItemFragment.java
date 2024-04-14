@@ -48,6 +48,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 public class NewItemFragment extends Fragment implements OnMapReadyCallback {
@@ -207,9 +208,26 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 100 && resultCode == AppCompatActivity.RESULT_OK && data != null){
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            productImage.setImageBitmap(bitmap);
+//        if(requestCode == 100 && resultCode == AppCompatActivity.RESULT_OK && data != null){
+//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//            productImage.setImageBitmap(bitmap);
+//        }
+
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            if (requestCode == 100 && data != null) {
+                // Imagem capturada pela câmera
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                productImage.setImageBitmap(bitmap);
+            } else if (requestCode == 102 && data != null) {
+                // Imagem selecionada da galeria
+                Uri selectedImageUri = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), selectedImageUri);
+                    productImage.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
