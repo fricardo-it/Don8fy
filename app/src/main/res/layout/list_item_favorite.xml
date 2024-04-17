@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:background="@drawable/item_background"
     android:orientation="vertical">
 
     <ImageView
@@ -11,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
+        android:padding="15dp"
         android:src="@drawable/ic_android"
         android:contentDescription="@string/product_description" />
 
@@ -22,7 +24,7 @@
         <TextView
             android:id="@+id/textProductNameFavorites"
             android:layout_width="218dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="sans-serif"
             android:paddingTop="8dp"
@@ -35,8 +37,8 @@
 
         <ImageButton
             android:id="@+id/showed_item_favorites"
-            android:layout_width="54dp"
-            android:layout_height="48dp"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:contentDescription="@string/favorite_item"
