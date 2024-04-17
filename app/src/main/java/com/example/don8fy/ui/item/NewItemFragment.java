@@ -325,7 +325,7 @@ public class NewItemFragment extends Fragment implements OnMapReadyCallback {
             itemPosition = Double.toString(mapPosition.latitude) + "," + Double.toString(mapPosition.longitude);
         } else {
             // Handle the case when currentLocation is null
-            Toast.makeText(requireContext(), "Failed to get current location", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(requireContext(), "Failed to get current location", Toast.LENGTH_SHORT).show();
         }
     }
 
