@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:background="@color/off_white"
     android:paddingStart="32dp"
     android:paddingEnd="32dp"
     android:paddingTop="64dp"
@@ -14,7 +15,7 @@
 
     <ImageView
         android:layout_width="208dp"
-        android:layout_height="155dp"
+        android:layout_height="200dp"
         android:layout_gravity="center_horizontal"
         android:src="@drawable/don8fylogopng"
         android:contentDescription="@string/app_logo"/>
@@ -26,7 +27,7 @@
         android:textSize="32sp"
         android:textColor="@color/blue"
         android:textStyle="bold"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="22dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -47,8 +48,10 @@
     <EditText
         android:id="@+id/emailtxt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:inputType="textEmailAddress"
+        android:paddingStart="8dp"
+        android:text="lopes@lasalle.com"
         android:layout_marginTop="8dp"
         android:background="@drawable/edit_text_background"/>
 
@@ -70,17 +73,18 @@
             android:id="@+id/passwordtxt"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:paddingStart="8dp"
+            android:text="12345678"
             android:inputType="textPassword"
             android:background="@drawable/edit_text_background"/>
 
         <ImageButton
             android:id="@+id/eyebtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:background="@null"
             android:src="@drawable/ic_show"
-            android:tint="@color/blue"
             android:contentDescription="@string/show_password" />
 
     </LinearLayout>
@@ -107,35 +111,30 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/forgotbtn"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:textSize="14dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:text="@string/forgot_password" />
 
             <TextView
-                android:id="@+id/forgotbtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:layout_marginLeft="10dp"
-                android:text="@string/click_here"
-                android:textColor="@color/blue"/>
-
-            <TextView
                 android:id="@+id/signupbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="100dp"
+                android:layout_alignParentEnd="true"
                 android:gravity="end"
-                android:textStyle="bold"
                 android:text="@string/sign_up"
-                android:textColor="@color/blue" />
+                android:textColor="@color/blue"
+                android:textSize="14dp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
