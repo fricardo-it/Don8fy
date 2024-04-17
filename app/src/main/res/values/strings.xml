@@ -19,6 +19,7 @@
     <string name="welcome_to_don8fy_app">Welcome to Don8fy App</string>
     <string name="don8fy_logo">Don8fy logo</string>
     <string name="have_an_account">Have an Account?</string>
+    <string name="have_no_account">Have no Account?</string>
     <string name="register">Register</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="click_here">Click here!</string>
@@ -27,7 +28,7 @@
     <string name="show_password">Show Password</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
-    <string name="greetings">Hi There! Nice to see you again!</string>
+    <string name="greetings">Hi There! Nice to see you!</string>
     <string name="full_name">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="hello">New Item</string>
@@ -52,5 +53,6 @@
     <string name="enter_your_e_mail">Enter your e-mail</string>
     <string name="no_favorite_item">Sorry... :\'( \n\n\n There is no favorite item!</string>
     <string name="exit">Exit</string>
+    <string name="app_logo">Don8fy app</string>
 
 </resources>
