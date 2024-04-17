@@ -17,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.example.don8fy.MainActivity;
 import com.example.don8fy.R;
 import com.example.don8fy.databinding.FragmentAccountBinding;
 import com.example.don8fy.ui.access.LoginPage;
+import com.example.don8fy.ui.home.HomeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -79,6 +81,8 @@ public class AccountFragment extends Fragment {
             public void onClick(View v) {
                 updateUser();
             }
+
+
         });
 
         deleteUser.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +163,7 @@ public class AccountFragment extends Fragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(requireContext(), "User name updated", Toast.LENGTH_SHORT).show();
+
                                 if (nameUpdateListener != null) {
                                     nameUpdateListener.onNameUpdated(newName);
                                 }
