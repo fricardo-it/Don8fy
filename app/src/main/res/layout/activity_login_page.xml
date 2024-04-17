@@ -10,8 +10,8 @@
     android:background="@color/off_white"
     android:paddingStart="32dp"
     android:paddingEnd="32dp"
-    android:paddingTop="64dp"
-    android:paddingBottom="64dp">
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp">
 
     <ImageView
         android:layout_width="208dp"
