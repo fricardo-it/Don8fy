@@ -54,5 +54,6 @@
     <string name="no_favorite_item">Sorry... :\'( \n\n\n There is no favorite item!</string>
     <string name="exit">Exit</string>
     <string name="app_logo">Don8fy app</string>
+    <string name="item">Item</string>
 
 </resources>
