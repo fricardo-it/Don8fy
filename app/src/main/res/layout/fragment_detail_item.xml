@@ -22,6 +22,14 @@
             tools:ignore="MissingConstraints"
             android:background="@drawable/detail_background">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/detail_item"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/blue"/>
             <ImageView
                 android:id="@+id/imageProduct"
                 android:layout_width="match_parent"
