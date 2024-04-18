@@ -67,7 +67,7 @@ public class AccountFragment extends Fragment {
         emailUser = root.findViewById(R.id.emailtxt);
 
         // disable edit name btn
-        editUser.setEnabled(false);
+        //editUser.setEnabled(false);
 
         nameUser.setOnClickListener(new View.OnClickListener() {
             @Override
