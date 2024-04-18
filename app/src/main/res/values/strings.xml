@@ -32,7 +32,6 @@
     <string name="full_name">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="hello">New Item</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_new_item">Add New Item</string>
     <string name="cancel">Cancel</string>
@@ -48,7 +47,6 @@
     <string name="upload_photo">Upload Photo</string>
     <string name="save_changes">Save Changes</string>
     <string name="cancel_changes">Cancel changes</string>
-    <string name="edit_page">Edit Page</string>
     <string name="favorite_item">Favorite Item</string>
     <string name="enter_your_e_mail">Enter your e-mail</string>
     <string name="no_favorite_item">Sorry... :\'( \n\n\n There is no favorite item!</string>
