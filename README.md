@@ -1,14 +1,15 @@
 # Don8fy
 Don8fy is an Android application for sharing furniture and other donations.
 
-![image](https://github.com/user-attachments/assets/5157b760-1806-4053-9a3d-b7d666407b14)
-![image](https://github.com/user-attachments/assets/f9dfd13a-bf64-45c3-8eef-8078552198df)
-![image](https://github.com/user-attachments/assets/81d4d87b-4a37-4626-b8e6-1083799e1635)
-![image](https://github.com/user-attachments/assets/dbdd0d45-c61d-43f0-97d3-2888b618db48)
-![image](https://github.com/user-attachments/assets/858f03d2-67fc-47a4-a957-bc4d266e071b)
-![image](https://github.com/user-attachments/assets/b68e416b-f3d8-430d-92ab-e612ba1578c8)
-![image](https://github.com/user-attachments/assets/dc67e223-71c9-4c18-a397-3fced644ad02)
-![image](https://github.com/user-attachments/assets/36926e7a-f482-46df-b960-504bb5c89752)
-![image](https://github.com/user-attachments/assets/db21a327-6d2b-441b-a052-922f6a8f44d1)
-![image](https://github.com/user-attachments/assets/4ac15fcd-56bd-4b27-ae43-aac6d692252f)
+![image](https://github.com/user-attachments/assets/930c30bf-fe11-47f2-a97a-89c036860add)
+![image](https://github.com/user-attachments/assets/f586e926-5f59-425d-ac9c-1617de224a35)
+![image](https://github.com/user-attachments/assets/dbeaf6fc-43de-4543-b9ec-fd54aae5dad4)
+![image](https://github.com/user-attachments/assets/bd761fb4-e61a-406d-bd06-328abdcdc2bc)
+![image](https://github.com/user-attachments/assets/73001fa9-27d9-4906-af71-1533a2647328)
+![image](https://github.com/user-attachments/assets/faafeb57-dc82-4fd5-94ca-bd4c84a81021)
+![image](https://github.com/user-attachments/assets/05a9affa-22e2-42a1-a9ed-02c215d1658a)
+![image](https://github.com/user-attachments/assets/2096ca44-e9c7-4875-97ae-52e0ad671a9b)
+![image](https://github.com/user-attachments/assets/cd2212c3-216d-4412-92f8-ec94f760e913)
+![image](https://github.com/user-attachments/assets/6f3a995c-a189-4f82-8119-04698f9f6287)
+
 
